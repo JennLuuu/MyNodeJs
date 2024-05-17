@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title></title>
+  </head>
+  <body>
+    <button id="btn">test</button>
+    <script>
+      const oBtn = getElementById("btn");
+      obtn.onclick = function () {
+        //创建xhr对象
+        const xhr = new XMLHttpRequest();
+
+        /* 
+        open方法打开链接:
+        xhr.open("请求方式","请求地址",是否异步(true))
+        */
+
+        /* 
+        get请求的数据都在url上拼接
+        get默认读取缓存,所以可以在get的地址上拼接一个query参数为时间戳,每次请求的实际地址是不一样的,就不会读取缓存
+        */
+        //打开链接
+        xhr.open(
+          "GET",
+          "http://127.0.0.1:8080/userList?className=jiaoyan7&group=0&_=" +
+            Date.now(),
+          true
+        );
+
+        //发送请求
+        //get的数据直接拼在地址栏上,所以send不用发数据
+        xhr.send();
+
+        //给xhr绑定readystatechange事件
+        xhr.onreadystatechange = function () {
+          //真正的成功是:请求状态码是4, 响应状态码是200
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            //通过xhr.responseText拿到后端传过来的数据
+            console.log(xhr.responseText);
+            console.log(JSON.parse(xhr.responseText));
+          }
+        };
+      };
+
+      /* 
+      xhr.readyState: 请求状态码
+      0 :尚未初始化   对应XMLHttpRequest.UNSENT
+      1 :打开路径     对应XMLHttpRequest.OPENED
+      2 :路径加载完毕 对应XMLHttpRequest.HEADERS_RECEIVED
+      3 :正在发送请求 对应XMLHttpRequest.LOADING
+      4 :请求发送成功 对应XMLHttpRequest.DONE
+
+      xhr.status : 相应状态码
+      xhr.responseText : 相应的数据
+      */
+    </script>
+  </body>
+</html>
