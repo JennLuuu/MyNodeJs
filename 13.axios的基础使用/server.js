@@ -1,7 +1,6 @@
 //搭建服务器
 
 //引入内部模块
-const { group } = require("console");
 const express = require("express");
 const path = require("path");
 

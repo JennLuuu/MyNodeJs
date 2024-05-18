@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+        <title></title>
+    </head>
+    <body>
+        <button id="btn">测试</button>
+        <button id="abort">中断</button>
+     <script>
+        /* 
+         * 获取按钮
+         * 创建xhr
+         * 给按钮绑定点击事件
+         * 点击按钮发送请求数据
+             - 打开路径
+             - 发送请求
+             - 事件监听
+
+        */
+        const oBtn = document.getElementById("btn")
+        const oAbort = document.getElementById("abort")
+
+        //1. 创建xhr
+        const xhr = new XMLHttpRequest()
+
+        oBtn.onclick = function(){
+            //2. 打开路径
+            xhr.open("POST","/test",true)
+
+            //3. 发送请求和数据(请求体在send方法中发送)
+            xhr.send()
+
+            //4. 事件监听
+            xhr.onreadystatechange = function(){
+                
+            }
+        }
+     </script>
+    </body>
+</html>
