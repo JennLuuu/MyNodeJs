@@ -1,0 +1,29 @@
+<!--
+ * @Author: Jenn_Lu 1129694837@qq.com
+ * @Date: 2024-05-20 19:26:15
+ * @LastEditors: Jenn_Lu 1129694837@qq.com
+ * @LastEditTime: 2024-05-20 19:53:50
+ * @FilePath: \MyNodeJs\19.CORS跨域\index.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+        <title></title>
+        <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.8/axios.js"></script>
+    </head>
+    <body>
+        <button id="btn">test</button>
+     <script>
+        const oBtn = document.getElementById("btn");
+
+        oBtn.onclick = function(){
+            const result = axios.get("http://127.0.0.1:8080/user1")
+            console.log(result);
+        }
+     </script>
+    </body>
+</html>
