@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title></title>
+  </head>
+  <body>
+    <button id="btn">go go go</button>
+    <script>
+      //创建axios实例
+      const axios1 = axios.create({
+        baseURL: "/pro/admin",
+        timeout: 1,
+        headers: {
+          hello: "world",
+        },
+      });
+
+      //给axios1配置请求拦截器
+      axios.interceptors.request.use(
+        (config) => {
+          //请求拦截器的成功回调函数拿到的是axios请求时配置对象
+          console.log("请求拦截器", config);
+
+          //可以随时修改配置对象中的内容
+          config.headers.goodGoodStudy = "dayDayUp";
+
+          //一定要记得放行
+          return config;
+        },
+        //失败回调函数基本不可能进得来
+        () => {}
+      );
+
+      //给axios1配置响应拦截器
+      axios1.interceptors.response.use(
+        //如果相应成功,则进入成功回调函数进行处理
+        //回调函数接收axios1响应对象作为参数
+        (response) => {
+            console.log(response);
+
+            //一定要记得放行
+            return response.data;
+        },
+        //如果相应失败,进入失败回调函数,拿到错误信息,再进行相应处理
+        (error) => {
+            console.log("error",error);
+        }
+      );
+
+      const oBtn = document.getElementById("btn");
+      oBtn.onclick = function(){
+        const res = axios1.get("/userList",{
+            params:{
+                className
+            }
+        })
+      }
+    </script>
+  </body>
+</html>
