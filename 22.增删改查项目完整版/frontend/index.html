@@ -1,0 +1,320 @@
+<!--
+ * @Author: Jenn_Lu 1129694837@qq.com
+ * @Date: 2024-05-21 10:58:38
+ * @LastEditors: Jenn_Lu 1129694837@qq.com
+ * @LastEditTime: 2024-05-22 00:00:20
+ * @FilePath: \MyNodeJs\22.增删改查项目完整版\frontend\index.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!--
+ * @Author: Jenn_Lu 1129694837@qq.com
+ * @Date: 2024-05-21 10:58:38
+ * @LastEditors: Jenn_Lu 1129694837@qq.com
+ * @LastEditTime: 2024-05-21 19:17:57
+ * @FilePath: \MyNodeJs\22.增删改查项目完整版\frontend\index.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title>增删改查项目完整版</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.8/axios.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <style>
+      #addForm {
+        background-color: azure;
+        padding: 10px;
+      }
+      #searchForm {
+        background-color: beige;
+        padding: 10px;
+      }
+      table {
+        text-align: center;
+      }
+      #updateData {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgb(237, 203, 153);
+        padding: 20px;
+        z-index: 1;
+        display: none;
+      }
+      #mask {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.317);
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 新增数据form表单 -->
+    <form action="" id="addForm">
+      <h1>新增数据</h1>
+      <p>姓名: <input type="text" name="name" required /></p>
+      <p>
+        性别:
+        <input type="radio" name="sex" value="男" required /> 男
+        <input type="radio" name="sex" value="女" required /> 女
+      </p>
+      <p>
+        年龄:
+        <input type="number" name="age" id="required" />
+      </p>
+      <p>
+        学科
+        <select name="subject" id="" required>
+          <option value="HTML5">HTML5</option>
+          <option value="JAVA">JAVA</option>
+          <option value="PHP">PHP</option>
+          <option value="PY">PY</option>
+          <option value="GO">GO</option>
+        </select>
+      </p>
+      <p>
+        籍贯:
+        <input type="text" name="address" id="" required />
+      </p>
+      <button>新增</button>
+    </form>
+    <!-- 查询数据form表单 -->
+    <form action="" id="searchForm">
+      <h1>查询</h1>
+      <p>
+        学科
+        <select name="subject" id="">
+          <option value="">暂不选择</option>
+          <option value="HTML5">HTML5</option>
+          <option value="JAVA">JAVA</option>
+          <option value="PHP">PHP</option>
+          <option value="PY">PY</option>
+          <option value="GO">GO</option>
+        </select>
+      </p>
+      <p>
+        性别:
+        <input type="radio" name="sex" value="男" id="" />男
+        <input type="radio" name="sex" value="女" id="" />女
+      </p>
+      <p>
+        最小年纪
+        <input type="number" name="minAge" id="" />
+        最大年纪
+        <input type="number" name="maxAge" id="" />
+      </p>
+      <button id="search">查询</button>
+    </form>
+    <!-- 数据展示表格 -->
+    <table border="1" style="border-collapse: collapse; width: 1000px">
+      <caption style="font-weight: 800">
+        老师列表
+      </caption>
+      <tr>
+        <th>序号</th>
+        <th>姓名</th>
+        <th>性别</th>
+        <th>年龄</th>
+        <th>学科</th>
+        <th>籍贯</th>
+        <th>操作</th>
+      </tr>
+    </table>
+    <form id="updateData">
+      <p>年龄: <input type="number" name="age" required /></p>
+      <p>籍贯: <input type="text" name="address" required /></p>
+      <button id="update">修改</button>
+      <button id="cancelUpdata">取消</button>
+    </form>
+    <div id="mask"></div>
+    <script>
+      //创建axios实例
+      const request = axios.create({
+        baseURL: "http://127.0.0.1:3000",
+        timeout: 5000,
+        headers: {},
+      });
+      //配置axios拦截器
+      request.interceptors.request.use((config) => {
+        return config;
+      });
+      request.interceptors.response.use(
+        (response) => {
+          //如果相应成功,则返回响应回来的数据中所需要的数据
+          if (response.data.code === 200) {
+            return response.data.data;
+          } else {
+            return Promise.reject(new Error("response.data.message"));
+          }
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      );
+
+      //处理数据展示到页面
+      function showData(res) {
+        res.forEach((item, index) => {
+          const newTr = document.createElement("tr");
+          newTr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.name}</td>
+            <td>${item.sex}</td>
+            <td>${item.age}</td>
+            <td>${item.subject}</td>
+            <td>${item.address}</td>
+            <td>
+                <button type="button" class="delete" data-id="${
+                  item._id
+                }">删除</button>
+                <button type="button" class="update" data-id="${
+                  item._id
+                }">修改</button>
+            </td>
+            `;
+          oTbody.appendChild(newTr);
+        });
+      }
+      //初始化, 进入到页面就要去请求数据并展示到页面上
+      const oTbody = document.querySelector("table tbody");
+
+      const initData = async () => {
+        //发送请求获取数据
+        //发送请求可能会出问题,要包在try catch语句中
+        try {
+          const res = await request.get("/teacher");
+          showData(res);
+
+          //将响应回来的数据展示到页面上
+          console.log(res);
+        } catch (error) {
+          alert("初始化请求失败", error.message);
+        }
+      };
+      initData();
+
+      //新增数据
+      /* 
+      给addForm添加数据,添加之后,拿到收集到的数据拆分成请求体数据,通过post提交
+      */
+      const oAddForm = document.getElementById("addForm");
+      //给addForm绑定提交事件
+      oAddForm.onsubmit = async function (e) {
+        //提交事件会默认刷新页面,不想要,取消默认事件
+        e.preventDefault();
+
+        //使用jQuery将收集到的form表单数据转换成查询字符串的格式(得到序列化的值)
+        const formDataQuery = $(this).serialize();
+        //将查询字符串格式的数据转换成body格式
+        const formData = formDataQuery.split("&").reduce((p, c) => {
+          console.log(666);
+          const [key, value] = c.split("=");
+          //jQuery的encodeURI和decodeURI可以将文本进行转换(encodeURI转成16进制编码的;decodeURI转回来)
+          p[key] = decodeURI(value);
+          return p;
+        }, {});
+
+        try {
+          await request.post("/teacher", formData);
+          alert("新增成功");
+
+          //新增数据会增加到数据库中,但页面上依旧不展示,所以需要刷新页面
+          location.reload();
+        } catch (error) {
+          alert("新增失败" + error.message);
+        }
+      };
+
+      //查询数据
+      const oSearchForm = document.getElementById("searchForm");
+      oSearchForm.onsubmit = async function (e) {
+        e.preventDefault();
+
+        const formData = $(this).serialize();
+
+        try {
+          const res = await request.get("/teacher?" + formData);
+
+          oTbody.innerHTML = `
+            <tr>
+              <th>序号</th>
+              <th>姓名</th>
+              <th>性别</th>
+              <th>年龄</th>
+              <th>学科</th>
+              <th>籍贯</th>
+              <th>操作</th>
+            </tr>
+            `;
+          showData(res);
+        } catch (error) {
+          alert("查询失败" + error.message);
+        }
+      };
+
+      //删除 和 修改
+      const oMask = document.getElementById("mask");
+      const oUpdateData = document.querySelector("#updateData");
+      let updataID = null;
+      oTbody.onclick = async function (e) {
+        if (e.target.nodeName === "BUTTON" && e.target.className === "delete") {
+          const { id } = e.target.dataset;
+
+          try {
+            await request.delete(`/teacher/${id}`);
+            alert("修改成功");
+          } catch (e) {
+            alert("修改失败" + e.message);
+          }
+        } else if (
+          e.target.nodeName === "BUTTON" &&
+          e.target.className === "update"
+        ) {
+          oMask.style.display = "block";
+          oUpdateData.style.display = "block";
+
+          //把当前修改按钮上的id 交给 全局变量 updateID 保存,方便真正修改时拿到点击的修改按钮
+          updataID = e.target.dataset.id;
+        }
+      };
+
+      //取消修改按钮
+      const oCancelUpdate = document.getElementById("cancelUpdata");
+      oCancelUpdate.onclick = function () {
+        oMask.style.display = "none";
+        oUpdateData.style.display = "none";
+      };
+
+      //给弹窗中的修改按钮绑定修改事件
+      const oUpdate = document.getElementById("updateData");
+      oUpdate.onsubmit = async function (e) {
+        e.preventDefault();
+
+        const formDataQuery = $(this).serialize();
+
+        //转为对象
+        const formData = formDataQuery.split("&").reduce((p, c) => {
+          const [key, value] = c.split("=");
+          p[key] = decodeURI(value);
+          return p;
+        }, {});
+
+        try {
+          await request.put(`/teacher/${updataID}`, formData);
+          alert("修改成功");
+          location.reload();
+        } catch (error) {
+          alert("修改失败" + error.message);
+        }
+      };
+    </script>
+  </body>
+</html>
