@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title>cookie</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.8/axios.js"></script>
+  </head>
+  <body>
+    <button id="login">登录</button>
+    <button id="get">查询</button>
+    <button id="logout">退出登录</button>
+    <script>
+      const oLogin = document.getElementById("login");
+      const oGet = document.getElementById("get");
+      const oLogout = document.getElementById("logout");
+
+      oLogin.onclick = function () {
+        axios.post("/login", {
+          username: "admin",
+          password: "123",
+        });
+      };
+      oGet.onclick = function(){
+        axios.get("/userList")
+      }
+      oLogout.onclick = function(){
+        axios.get("/logout")
+      }
+    </script>
+  </body>
+</html>
