@@ -1,0 +1,50 @@
+<!--
+ * @Author: Jenn_Lu 1129694837@qq.com
+ * @Date: 2024-05-25 00:07:07
+ * @LastEditors: Jenn_Lu 1129694837@qq.com
+ * @LastEditTime: 2024-05-25 00:20:30
+ * @FilePath: \MyNodeJs\31.session\public\center.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title></title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.8/axios.js"></script>
+  </head>
+  <body>
+    <a href="./register.html">注册</a>
+    <a href="./login.html">登录</a>
+    <h1>主页</h1>
+    <button id="btn">按钮</button>
+    <script>
+      //拦截器
+      axios.interceptors.response.use(
+        (response) => {
+          if (response.data.code === 200) {
+            return response.data.data;
+          } else {
+            return Promise.reject(new Error(response.data.message));
+          }
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      );
+
+      //发送请求
+      const oBtn = document.getElementById("btn");
+      oBtn.onclick = async function () {
+        try {
+          const result = await axios.get("/userList");
+          alert("查询成功," + result);
+        } catch (e) {
+          alert("查询失败" + e.message);
+        }
+      };
+    </script>
+  </body>
+</html>

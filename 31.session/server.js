@@ -72,10 +72,14 @@ app.post("/login", async (req, res) => {
 
       //将该sessionID设置到session对象身上
       session[sessionID] = { username, password };
+
+      res.cookie("sessionID",sessionID)
       res.send({
         code: 200,
         message: "登录成功",
-        data: null,
+        data: {
+            tickname: result.tickname,
+        },
       });
     }
   } catch (error) {

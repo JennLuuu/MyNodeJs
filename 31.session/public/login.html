@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title></title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.8/axios.js"></script>
+  </head>
+  <body>
+    <a href="./center.html">个人中心</a>
+    <a href="./register.html">注册</a>
+    <form action="" id="form">
+      <p>
+        用户名:
+        <input type="text" name="username" />
+      </p>
+      <p>
+        密码:
+        <input type="password" name="password" />
+      </p>
+      <button>提交</button>
+    </form>
+
+    <script>
+      //拦截器
+      axios.interceptors.response.use(
+        (response) => {
+          if (response.data.code === 200) {
+            return response.data.data;
+          } else {
+            return Promise.reject(new Error(response.data.message));
+          }
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      );
+
+      
+      const oForm = document.getElementById("form");
+      //提交请求
+      oForm.onsubmit = async function (e) {
+        e.preventDefault();
+
+        //收集数据
+        const dataString = $(this).serialize();
+        const data = dataString.split("&").reduce((p, c) => {
+          const [key, value] = c.split("=");
+          p[key] = value;
+          return p;
+        }, {});
+
+        //发送请求
+        try {
+          const result = await axios.post("/login", data);
+          alert("登录成功,欢迎" + result.tickname);
+        } catch (e) {
+          alert("登录失败" + e.message);
+        }
+      };
+    </script>
+  </body>
+</html>

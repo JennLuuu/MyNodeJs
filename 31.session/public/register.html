@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title>注册</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.6.8/axios.js"></script>
+  </head>
+  <body>
+    <a href="./center.html">个人中心</a>
+    <a href="./login.html">登录</a>
+    <form action="###" id="form">
+      <h1>注册页!!!!</h1>
+      <p>
+        用户名:
+        <input type="text" name="username" required />
+      </p>
+      <p>
+        密码:
+        <input type="password" name="password" required />
+      </p>
+      <p>
+        昵称:
+        <input type="text" name="tickname" required />
+      </p>
+      <p>
+        性别:
+        <input type="radio" name="sex" value="男" required /> 男
+        <input type="radio" name="sex" value="女" required /> 女
+      </p>
+      <p>
+        爱好:
+        <input type="text" name="hobby" required />
+      </p>
+      <button>提交</button>
+    </form>
+    <script>
+      //axios拦截器
+      axios.interceptors.response.use(
+        (response) => {
+          if (response.data.code === 200) {
+            return response.data.data;
+          } else {
+            return Promise.reject(new Error(response.data.message));
+          }
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      );
+
+      //发送请求
+      const oForm = document.getElementById("form");
+      oForm.onsubmit = async function (e) {
+        e.preventDefault();
+
+        //获取数据
+        const dataString = decodeURI($(this).serialize());
+        const data = dataString.split("&").reduce((p, c) => {
+          const [key, value] = c.split("=");
+          p[key] = value;
+          return p;
+        }, {});
+
+        //发送请求
+        try {
+          await axios.post("/register", data);
+          alert("注册成功");
+        } catch (error) {
+          alert("注册失败," + error.message);
+        }
+      };
+    </script>
+  </body>
+</html>
